@@ -9,6 +9,7 @@ Similarities:
 - As Leetcode tests per challenge are in the quantity of 100s and 1000s, typically not all are read through to complete a challenge; similar to 'hidden' tests in a hiring process challenge (i.e. test input and output is not provided to developer)
 - In both Leetcode and hiring process challenges, typically time limits are provided implicitly, and so the developer is expected to eyeball an algorithm that will fit within them (arguably unreasonable)
 - Leetcode provides acceptance scores (how many people passed all provided tests), which are sometimes out-of-sync with difficulty labels, and hiring process challenges are typically looking primarily at acceptance scores
+- Browser based interface, play buttons and all...
 
 Strategy is to practice prototyping an algorithm quickly (very difficult) in Python, then porting to C quickly (not that hard). LLMs are not yet socially accepted for the latter part, though they are very good at Python to Go ports (relatively similar language features), however Go has many idioms, doesn't receive first-party support in a multi-language context (e.g. have to explicitly make all ints as int32 for tests to work, requiring more idioms). C language features more minimalist, much easier to memorise, hopefully enough for most challenges.
 
