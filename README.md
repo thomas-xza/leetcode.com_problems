@@ -2,8 +2,8 @@ Lady who managed to get past the 7-stage hiring process at Bloomberg said she ha
 
 Issues with Leetcode as a source of practice for hiring process code challenges:
 - Some Leetcode tests cover rare edge cases (typically there are 100s or 1000s of tests, but only ~20 in a hiring challenge),
-- Some Leetcode challenges may require niche pre-requisite computer science knowledge, but hiring process challenges may seek to present a problem that is relatively new to all, to test the ability to design algorithms
-- Some Leetcode challenges may have average solution times far longer than a typical hiring process code challenge time limit (e.g. Leetcode #4 which requires implementing two binary searches that run in parallel, and then converge, to get to O(log(m + n))
+- Some Leetcode challenges may require niche pre-requisite computer science knowledge, but hiring process challenges may seek to present a problem that is relatively new to all, to test the ability to design new algorithms (as opposed to implementing known algorithms)
+- Some Leetcode challenges may have average implementation times far longer than a typical hiring process code challenge time limit (e.g. Leetcode #4 which requires implementing two binary searches that run in parallel, and then converge, to get to O(log(m + n))
 
 The 'medium' problems are probably more along the lines of what might occur in a time-based hiring process code challenge.
 
