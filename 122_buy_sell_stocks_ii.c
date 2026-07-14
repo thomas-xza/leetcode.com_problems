@@ -76,7 +76,6 @@ int maxProfit(int* prices, int pricesSize) {
 
          while (all_options[s][i].val != 0) {
 
-            i++;
             e = all_options[s][i].end;
             v = all_options[s][i].val;
 
@@ -86,7 +85,7 @@ int maxProfit(int* prices, int pricesSize) {
             //     best_s = s;
             // }
 
-            printf("(%d, %d, %d)\n", s, e, v);
+            //printf("(%d, %d, %d)\n", s, e, v);
              
             profit_per_day = v / (e - s);
 
@@ -96,6 +95,8 @@ int maxProfit(int* prices, int pricesSize) {
                 best_v = v;
                 best_s = s;
             }
+
+            i++;
 
         }
         
