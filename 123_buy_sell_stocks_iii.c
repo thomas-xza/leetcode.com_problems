@@ -4,7 +4,7 @@
 //  This is an O(n^2) solution!
 //  Admittedly, it shouldn't have been implemented in C; the algorithm is fast enough, writing C has slowed down the process of implementation.
 
-//  Currently, some tests fail to pass, as it is not entirely clear the best way to merge options.
+//  Currently, some tests fail to pass, as it is not entirely clear the best way to merge all options.
 
 #define DAYS 1024
 
@@ -103,9 +103,12 @@ int merge_smallest_adjacent_profits(int* prices, int pricesSize) {
 
     //  Iterate over the prices, find smallest two ascending options, merge.
 
+    //  Conditions for resulting merge:
+    //  Final merged option must be larger than either option merged.
+
     int options[DAYS] = {0};
     int i, potential_merge;
-    int smallest_merge = INT_MIN;
+    int best_merge = INT_MAX;
 
     for (i = 0 ; i < pricesSize - 1; i++) {
         options[i+1] = prices[i+1] - prices[i];
@@ -114,21 +117,21 @@ int merge_smallest_adjacent_profits(int* prices, int pricesSize) {
             potential_merge = options[i-1] + options[i] + options[i+1];
             if (potential_merge > options[i-1] &&
                 potential_merge > options[i] &&
-                potential_merge > options[i+1] && potential_merge > smallest_merge) {
+                potential_merge > options[i+1] && potential_merge < best_merge) {
             // if (potential_merge < smallest_merge && potential_merge > 0) {
             //     smallest_merge = i - 1;
             //     printf("smallest_merge: %d (%d, %d, %d)\n", smallest_merge, options[i-1], options[i], options[i+1]);
             // }
-                smallest_merge = i - 1;
+                best_merge = i - 1;
                 printf("%d \n", i);
             }
         }
     }
 
-    if (smallest_merge == INT_MIN)
+    if (best_merge == INT_MIN)
         return pricesSize;
 
-    for (i = smallest_merge ; i < pricesSize - 2 ; i++) {
+    for (i = best_merge ; i < pricesSize - 2 ; i++) {
         prices[i] = prices[i+2];
     }
 
