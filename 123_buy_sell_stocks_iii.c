@@ -54,6 +54,8 @@ int maxProfit(int* prices, int pricesSize) {
     while (pricesSize > target_size && new_profit >= max_profit && pricesSize != prices_size_prev) {
         prices_size_prev = pricesSize;
         max_profit = new_profit;
+        gen_options(prices, pricesSize, options);
+        print_prices(options, pricesSize);
         pricesSize = merge_smallest_adjacent_profits(prices, pricesSize);
         print_prices(prices, pricesSize);
         new_profit = calc_profit(prices, pricesSize);
@@ -104,31 +106,31 @@ int merge_smallest_adjacent_profits(int* prices, int pricesSize) {
     //  Iterate over the prices, find smallest two ascending options, merge.
 
     //  Conditions for resulting merge:
-    //  Final merged option must be larger than either option merged.
+    //  Overall profit must be larger than before merge.
+
+    //  TODO: try fitting cut_calc_profit() into this function.
 
     int options[DAYS] = {0};
     int i, potential_merge;
     int best_merge = INT_MAX;
 
     for (i = 0 ; i < pricesSize - 1; i++) {
+        printf("i = %d\n", i);
         options[i+1] = prices[i+1] - prices[i];
         //printf("%d ", options[i+1]);
         if (i > 1) {
             potential_merge = options[i-1] + options[i] + options[i+1];
+            printf("potential_merge = %d\n", potential_merge);
             if (potential_merge > options[i-1] &&
                 potential_merge > options[i] &&
                 potential_merge > options[i+1] && potential_merge < best_merge) {
-            // if (potential_merge < smallest_merge && potential_merge > 0) {
-            //     smallest_merge = i - 1;
-            //     printf("smallest_merge: %d (%d, %d, %d)\n", smallest_merge, options[i-1], options[i], options[i+1]);
-            // }
                 best_merge = i - 1;
-                printf("%d \n", i);
+                printf("best_merge = %d \n", i);
             }
         }
     }
 
-    if (best_merge == INT_MIN)
+    if (best_merge == INT_MAX)
         return pricesSize;
 
     for (i = best_merge ; i < pricesSize - 2 ; i++) {
@@ -136,6 +138,23 @@ int merge_smallest_adjacent_profits(int* prices, int pricesSize) {
     }
 
     return pricesSize - 2;
+
+}
+
+
+int cut_calc_profit(int* prices, int pricesSize, int target) {
+
+    int prices_new[DAYS] = {0};
+    
+    for (i = 0; i < pricesSize - 2; i++) {
+        if (i < target) {
+        prices_new[i] = prices[i];
+        } else {
+            prices_new[i] = prices[i+2];
+        }
+    }
+
+    return calc_profit(prices_new, pricesSize - 2);
 
 }
 
