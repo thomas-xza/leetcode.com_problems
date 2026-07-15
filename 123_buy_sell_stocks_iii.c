@@ -1,9 +1,10 @@
 #include <limits.h>
 
-//  The implementation is to compress the prices list, and then select best two options from a much more limited range. 
-//  This is an O(n) solution!
+//  The implementation idea is to compress the prices list, and then select best two options from a much more limited range. 
+//  This is an O(n^2) solution!
+//  Admittedly, it shouldn't have been implemented in C; the algorithm is fast enough, writing C has slowed down the process of implementation.
 
-//  Note that further compression is required to past the last few tests.
+//  Currently, some tests fail to pass, as it is not entirely clear the best way to merge options.
 
 #define DAYS 1024
 
@@ -11,13 +12,18 @@ int suffix_cut(int* prices, int pricesSize);
 int chk_profitability(int* prices, int pricesSize);
 int compress_ascending_or_descending(int* prices, int pricesSize, int direction);
 void print_prices(int* prices, int pricesSize);
-
+int merge_smallest_adjacent_profits(int* prices, int pricesSize);
+int gen_options(int* prices, int pricesSize, int* options);
+int calc_profit(int* prices, int pricesSize);
 
 int maxProfit(int* prices, int pricesSize) {
 
     int i;  //  start, end, value
 
     pricesSize = suffix_cut(prices, pricesSize);
+
+    if (chk_profitability(prices, pricesSize) == 0)
+        return 0;
 
     int profit = 0;
 
@@ -27,25 +33,58 @@ int maxProfit(int* prices, int pricesSize) {
     pricesSize = compress_ascending_or_descending(prices, pricesSize, 1);
     print_prices(prices, pricesSize);
 
+    int options[DAYS] = {0};
+
+    gen_options(prices, pricesSize, options);
+
+    int target_size;
+
+    if (options[1] > 0) {
+        target_size = 4;
+    } else {
+        target_size = 5;
+    }
+
+    printf("Merging prices...\n");
+
+    int max_profit = INT_MIN;
+    int new_profit = calc_profit(prices, pricesSize);
+    int prices_size_prev = INT_MAX;
+
+    while (pricesSize > target_size && new_profit >= max_profit && pricesSize != prices_size_prev) {
+        prices_size_prev = pricesSize;
+        max_profit = new_profit;
+        pricesSize = merge_smallest_adjacent_profits(prices, pricesSize);
+        print_prices(prices, pricesSize);
+        new_profit = calc_profit(prices, pricesSize);
+        printf("new_profit: %d \n", new_profit);
+    }
+
+    if (new_profit > max_profit)
+        return new_profit;
+
+    return max_profit;
+
+}
+
+
+int calc_profit(int* prices, int pricesSize) {
+
+    int i;
     int most_profitable[2] = {0};
     int most_profitable_pos[2] = {0};
 
     int options[DAYS] = {0};
+    gen_options(prices, pricesSize, options);
 
-    for (i = 0 ; i < pricesSize - 1; i++) {
-        options[i] = prices[i+1] - prices[i];
-        printf("%d ", options[i]);
-    }
-    printf("\n");
-
-    for (i = 0 ; i < pricesSize - 1; i++) {
+    for (i = 0 ; i < pricesSize; i++) {
         if (options[i] > most_profitable[0]) {
             most_profitable[0] = options[i];
             most_profitable_pos[0] = i;
         }
     }
 
-    for (i = 0 ; i < pricesSize - 1; i++) {
+    for (i = 0 ; i < pricesSize; i++) {
         if (options[i] > most_profitable[1] &&
             i != most_profitable_pos[0]) {
             most_profitable[1] = options[i];
@@ -55,10 +94,57 @@ int maxProfit(int* prices, int pricesSize) {
 
     printf("(%d, %d), (%d, %d)\n", most_profitable[0], most_profitable_pos[0], most_profitable[1], most_profitable_pos[1]);
 
-    if (chk_profitability(prices, pricesSize) == 0)
-        return 0;
-
     return most_profitable[0] + most_profitable[1];
+
+}
+
+
+int merge_smallest_adjacent_profits(int* prices, int pricesSize) {
+
+    //  Iterate over the prices, find smallest two ascending options, merge.
+
+    int options[DAYS] = {0};
+    int i, potential_merge;
+    int smallest_merge = INT_MIN;
+
+    for (i = 0 ; i < pricesSize - 1; i++) {
+        options[i+1] = prices[i+1] - prices[i];
+        //printf("%d ", options[i+1]);
+        if (i > 1) {
+            potential_merge = options[i-1] + options[i] + options[i+1];
+            if (potential_merge > options[i-1] &&
+                potential_merge > options[i] &&
+                potential_merge > options[i+1] && potential_merge > smallest_merge) {
+            // if (potential_merge < smallest_merge && potential_merge > 0) {
+            //     smallest_merge = i - 1;
+            //     printf("smallest_merge: %d (%d, %d, %d)\n", smallest_merge, options[i-1], options[i], options[i+1]);
+            // }
+                smallest_merge = i - 1;
+                printf("%d \n", i);
+            }
+        }
+    }
+
+    if (smallest_merge == INT_MIN)
+        return pricesSize;
+
+    for (i = smallest_merge ; i < pricesSize - 2 ; i++) {
+        prices[i] = prices[i+2];
+    }
+
+    return pricesSize - 2;
+
+}
+
+
+int gen_options(int* prices, int pricesSize, int* options) {
+
+    int i;
+    for (i = 0 ; i < pricesSize - 1; i++) {
+        options[i+1] = prices[i+1] - prices[i];
+        //printf("%d ", options[i+1]);
+    }
+    return 0;
 
 }
 
@@ -102,8 +188,6 @@ int compress_ascending_or_descending(int* prices, int pricesSize, int direction)
         //printf("(%d, %d) ", prices[i], seq);
 
     }
-
-    printf("\n");
 
     int prices_size_new = j;
     j = 0;
