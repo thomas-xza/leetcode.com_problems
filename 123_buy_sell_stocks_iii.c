@@ -4,7 +4,8 @@
 //  This is an O(n^2) solution!
 //  Admittedly, it shouldn't have been implemented in C; the algorithm is fast enough, writing C has slowed down the process of implementation.
 
-//  Currently, a last few Leetcode tests fail to pass, and they are too highly scaled to debug; there is some unknown discrepancy between the algorithm used to write the tests, and this one.
+//  Currently, a few last Leetcode tests fail to pass, and they are too highly scaled to debug; there is some unknown discrepancy between the algorithm used to write the tests, and this one.
+//  98.24% of the (alleged) max profit is reached, in the case of the first failing test.
 
 #define DAYS 1024
 
