@@ -4,7 +4,7 @@
 //  This is an O(n^2) solution!
 //  Admittedly, it shouldn't have been implemented in C; the algorithm is fast enough, writing C has slowed down the process of implementation.
 
-//  Currently, some tests fail to pass, as it is not entirely clear the best way to merge all options.
+//  Currently, a last few Leetcode tests fail to pass, and they are too highly scaled to debug; there is some unknown discrepancy between the algorithm used to write the tests, and this one.
 
 #define DAYS 1024
 
@@ -15,6 +15,7 @@ void print_prices(int* prices, int pricesSize);
 int merge_smallest_adjacent_profits(int* prices, int pricesSize);
 int gen_options(int* prices, int pricesSize, int* options);
 int calc_profit(int* prices, int pricesSize);
+int cut_calc_profit(int* prices, int pricesSize, int target);
 
 int maxProfit(int* prices, int pricesSize) {
 
@@ -113,6 +114,7 @@ int merge_smallest_adjacent_profits(int* prices, int pricesSize) {
     int options[DAYS] = {0};
     int i, potential_merge;
     int best_merge = INT_MAX;
+    int best_profit = INT_MIN;
 
     for (i = 0 ; i < pricesSize - 1; i++) {
         printf("i = %d\n", i);
@@ -121,11 +123,18 @@ int merge_smallest_adjacent_profits(int* prices, int pricesSize) {
         if (i > 1) {
             potential_merge = options[i-1] + options[i] + options[i+1];
             printf("potential_merge = %d\n", potential_merge);
-            if (potential_merge > options[i-1] &&
-                potential_merge > options[i] &&
-                potential_merge > options[i+1] && potential_merge < best_merge) {
+            if (prices[i-2] <= prices[i-1] &&
+                prices[i-2] <= prices[i] &&
+                prices[i-2] <= prices[i+1] &&
+                prices[i-1] >= prices[i] &&
+                prices[i-1] < prices[i+1] &&
+                prices[i] <= prices[i+1] &&
+                potential_merge <= best_merge &&
+                potential_merge >= 0) {
+            if (cut_calc_profit(prices, pricesSize, i-1) > best_profit) {
                 best_merge = i - 1;
                 printf("best_merge = %d \n", i);
+            }
             }
         }
     }
@@ -145,6 +154,7 @@ int merge_smallest_adjacent_profits(int* prices, int pricesSize) {
 int cut_calc_profit(int* prices, int pricesSize, int target) {
 
     int prices_new[DAYS] = {0};
+    int i;
     
     for (i = 0; i < pricesSize - 2; i++) {
         if (i < target) {
