@@ -7,7 +7,7 @@ Issues with Leetcode as a source of practice for hiring process code challenges 
 
 Similarities:
 - As Leetcode tests per challenge are in the quantity of 100s and 1000s, typically not all are read through to complete a challenge; similar to 'hidden' tests in a hiring process challenge (i.e. test input and output is not provided to developer)
-- In both Leetcode and hiring process challenges, typically time limits are provided implicitly, and so the developer is expected to eyeball an algorithm that will fit within them (arguably unreasonable)
+- In both Leetcode and hiring process challenges, typically execution time limits are provided implicitly (sometimes in combination with overall test time limits), and so the developer is expected to eyeball an algorithm that will fit within them
 - Leetcode provides acceptance scores (how many people passed all provided tests), which are sometimes out-of-sync with difficulty labels, and hiring process challenges are typically looking primarily at acceptance scores
 - Developers can fall victim to thinking of solutions from the perspective of known, formally recognised algorithms, rather than inventing new, more efficient ones based on the context
 - Browser based interfaces, play buttons and all...
