@@ -1,6 +1,6 @@
 //  This needs rewriting as the original problem was not initially understood.
 //  It was initially thought that the objective was how to toggle bits to make all numbers odd, or all numbers even.
-//  The objective is finding bits required to toggle to make all odd or all even...
+//  The objective is finding bits required to toggle to alternate between odd and even...
 //  The resulting code became a mess of the two ideas, but the latter was starting to break out at least.
 
 void simplify_array(int* xs, int xs_len, int* xs_v2);
