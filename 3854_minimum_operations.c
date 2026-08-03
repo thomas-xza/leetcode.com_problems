@@ -3,6 +3,8 @@
 //  The objective is finding bits required to toggle to alternate between odd and even...
 //  The resulting code became a mess of the two ideas, but the latter was starting to break out at least.
 
+//  The Python implementation actually works.
+
 void simplify_array(int* xs, int xs_len, int* xs_v2);
 void print_arr(int* xs, int xs_len);
 
