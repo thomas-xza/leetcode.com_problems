@@ -1,7 +1,8 @@
-##  If represented graphically, this resembles an NP-hard problem:
+##  If represented graphically, this is allegedly an NP-hard problem:
 ##  https://en.wikipedia.org/wiki/Longest_path_problem
 ##  Admittedly I never really liked graph theory (both before and during university), but understand the value in mapping software.
 ##  So, this is intentionally unfinished.
+##  There are presumably some greedy algorithms that work for the tests, but I don't know how long it would take to find one.
 
 class Solution:
     
