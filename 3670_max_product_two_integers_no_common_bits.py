@@ -1,4 +1,7 @@
 ##  Fails later test featuring a large quantity of unique data.
+##  Potentially this would suit Golang, as some features of Python
+##  are desirable and fast (sorting, removing duplicates), however
+##  even just the bitwise AND to find candidates is too slow with Python.
 
 from itertools import combinations
 
