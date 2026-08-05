@@ -17,6 +17,7 @@ from hashlib import md5
 ##  There are also only 2 different ways to represent such a tree,
 ##  when considering the leaf nodes for a string beginning "101010..."
 ##  to be "1, 01, 01, 0..." or "10, 10, 10...".
+##  And it may be necessary to merge the result of traversing both trees.
 
 class Solution:
 
