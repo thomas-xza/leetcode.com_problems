@@ -40,22 +40,22 @@ class Solution:
 
         for q in range(init_q, 0, -2):
 
-            print(w_quantity)
+            ##print(w_quantity)
 
             w_quantity = [w_quantity_batch, w_quantity[0]]
             w_quantity_batch = 0
 
-            while (w_quantity[1] > 0):
-                ss_counts.popitem()
-                w_quantity[1] -= 1
+            # while (w_quantity[1] > 0):
+            #     ss_counts.popitem()
+            #     w_quantity[1] -= 1
 
             running_counter = {'0': 0, '1': 0}
             
-            print("window size:", q)
+            ##print("window size:", q)
 
             for i in range(0, len(s)):
 
-                print("ss counts len:", len(ss_counts))
+                ##print("ss counts len:", len(ss_counts))
 
                 # print("i:", i)
 
