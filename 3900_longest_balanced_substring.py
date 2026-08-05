@@ -3,8 +3,9 @@ from hashlib import md5
 
 ##  "Don't optimise until you've measured." - David Patterson, Computer Organisation
 
-##  Wrote a coherent BFS search, but potentially only a DFS search works for test 963/992.
-##  Memory limit exceeded (perhaps I should've seen it coming).
+##  Tests passing: 963/992.
+##  Test #963 fails due to execution timeout.
+##  Major algorithm change may be required?
 
 class Solution:
 
@@ -17,7 +18,7 @@ class Solution:
 
         start = time.time()
 
-        bal_string_chks = {}
+        bal_string_chks = OrderedDict()
 
         ##  Don't exactly need a key-value store, but do want O(1) lookups.
 
@@ -42,16 +43,24 @@ class Solution:
 
             ##print(w_quantity)
 
+            ##print(ss_counts)
+
             w_quantity = [w_quantity_batch, w_quantity[0]]
             w_quantity_batch = 0
 
-            # while (w_quantity[1] > 0):
-            #     ss_counts.popitem()
-            #     w_quantity[1] -= 1
+            ##print("Popping ss_counts")
+
+            while (w_quantity[1] > 0):
+                ss_counts.popitem(last=False)
+                bal_string_chks.popitem(last=False)
+                w_quantity[1] -= 1
+                
+            ##print(ss_counts)
+            ##print("window size:", q)
 
             running_counter = {'0': 0, '1': 0}
             
-            ##print("window size:", q)
+            
 
             for i in range(0, len(s)):
 
@@ -67,8 +76,6 @@ class Solution:
 
                 if len(sub_s) < q:
                     break
-                else:
-                    w_quantity_batch += 1
 
                 ##print(sub_s)
 
@@ -80,10 +87,11 @@ class Solution:
 
                     ##print(ss_counts)
 
-                if sub_s not in ss_counts:
+                if self.hsh(sub_s) not in ss_counts:
 
                     ##  Count 1s and 0s using minimal computation.
                     running_counter, ss_counts = self.calculate_counts(s, sub_s, ss_counts, dict(running_counter), i, q)
+                    w_quantity_batch += 1
 
                 else:
                     ##  Else simply lookup.
@@ -92,11 +100,11 @@ class Solution:
                 ##print("ss_counts:", ss_counts)
 
                 if sub_s not in bal_string_chks:
-                    bal_string_chks[sub_s] = self.check_string(s, sub_s, ss_counts[self.hsh(sub_s)], i)
+                    bal_string_chks[self.hsh(sub_s)] = self.check_string(s, sub_s, ss_counts[self.hsh(sub_s)], i)
 
-                if bal_string_chks[sub_s] > -1:
+                if bal_string_chks[self.hsh(sub_s)] > -1:
 
-                    return bal_string_chks[sub_s]
+                    return bal_string_chks[self.hsh(sub_s)]
             
         return 0
 
@@ -214,6 +222,8 @@ class Solution:
         ##  The cutting of md5 
 
         return s
+
+        ##  hex(int(f"1{sub_s.zfill(len(s))}"))
 
         return adler32(str.encode(s))
 
