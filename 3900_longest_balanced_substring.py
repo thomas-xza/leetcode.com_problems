@@ -7,6 +7,17 @@ from hashlib import md5
 ##  Test #963 fails due to execution timeout.
 ##  Major algorithm change may be required?
 
+##  This file features a top-down BFS brute-force search, the root node being the largest possible
+##  substring, memory optimised in a way that cuts upper layers of the tree as it is traversed downwards.
+
+##  However, it is possible that instead a bottom-up approach,
+##  where the leaf nodes represent "(0|1)(0|1)" instances,
+##  which are gradually merged, may be more effective,
+##  until there is only 1 bit between them, that can be flipped.
+##  There are also only 2 different ways to represent such a tree,
+##  when considering the leaf nodes for a string beginning "101010..."
+##  to be "1, 01, 01, 0..." or "10, 10, 10...".
+
 class Solution:
 
     def longestBalanced(self, s: str) -> int:
