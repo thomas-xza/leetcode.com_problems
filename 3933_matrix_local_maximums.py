@@ -1,3 +1,4 @@
+##  693 / 706 testcases passed
 
 class Solution:
 
@@ -22,8 +23,6 @@ class Solution:
                    j_max, i_max = j, i
 
         count, matrix = self.local_max(val_max, j_max, i_max, matrix)
-
-        if 
 
         # matrix_tuple = sorted(matrix_tuple, key=lambda x: x[2])
 

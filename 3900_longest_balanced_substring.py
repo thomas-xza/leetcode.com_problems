@@ -1,0 +1,243 @@
+from collections import Counter, defaultdict, OrderedDict
+from hashlib import md5
+
+##  "Don't optimise until you've measured." - David Patterson, Computer Organisation
+
+##  Tests passing: 963/992.
+##  Test #963 fails due to execution timeout.
+##  Major algorithm change may be required?
+
+##  This file features a top-down BFS brute-force search, the root node being the largest possible
+##  substring, memory optimised in a way that cuts upper layers of the tree as it is traversed downwards.
+
+##  However, it is possible that instead a bottom-up approach,
+##  where the leaf nodes represent "(0|1)(0|1)" instances,
+##  which are gradually merged, may be more effective,
+##  until there is only 1 bit between them, that can be flipped.
+##  There are also only 2 different ways to represent such a tree,
+##  when considering the leaf nodes for a string beginning "101010..."
+##  to be "1, 01, 01, 0..." or "10, 10, 10...".
+##  And it may be necessary to merge the result of traversing both trees.
+
+class Solution:
+
+    def longestBalanced(self, s: str) -> int:
+
+        ##print("s:", s)
+
+        if '1' not in s or '0' not in s:
+            return 0
+
+        start = time.time()
+
+        bal_string_chks = OrderedDict()
+
+        ##  Don't exactly need a key-value store, but do want O(1) lookups.
+
+        ss_counts = OrderedDict()
+
+        biggest_str = True
+
+        ##  Generate all substrings in useful order (as opposed to s[i:j]).
+        ##  As in, largest string to smallest string.
+
+        if len(s) % 2 == 0:
+            init_q = len(s)
+        else:
+            init_q = len(s) - 1
+
+        ##print("init_q:", init_q)
+        
+        w_quantity = [0, 0]
+        w_quantity_batch = 0
+
+        for q in range(init_q, 0, -2):
+
+            ##print(w_quantity)
+
+            ##print(ss_counts)
+
+            w_quantity = [w_quantity_batch, w_quantity[0]]
+            w_quantity_batch = 0
+
+            ##print("Popping ss_counts")
+
+            while (w_quantity[1] > 0):
+                ss_counts.popitem(last=False)
+                bal_string_chks.popitem(last=False)
+                w_quantity[1] -= 1
+                
+            ##print(ss_counts)
+            ##print("window size:", q)
+
+            running_counter = {'0': 0, '1': 0}
+            
+            
+
+            for i in range(0, len(s)):
+
+                ##print("ss counts len:", len(ss_counts))
+
+                # print("i:", i)
+
+                ##  Extract substring.
+
+                sub_s = s[i:i + q]
+
+                ##  Simplest sliding window implementation involves a break.
+
+                if len(sub_s) < q:
+                    break
+
+                ##print(sub_s)
+
+                ##  Only call Counter() once, then re-use results.
+
+                if biggest_str == True:
+                    biggest_str = False
+                    ss_counts[self.hsh(sub_s)] = running_counter | dict(Counter(sub_s))
+
+                    ##print(ss_counts)
+
+                if self.hsh(sub_s) not in ss_counts:
+
+                    ##  Count 1s and 0s using minimal computation.
+                    running_counter, ss_counts = self.calculate_counts(s, sub_s, ss_counts, dict(running_counter), i, q)
+                    w_quantity_batch += 1
+
+                else:
+                    ##  Else simply lookup.
+                    running_counter = dict(ss_counts[self.hsh(sub_s)])
+
+                ##print("ss_counts:", ss_counts)
+
+                if sub_s not in bal_string_chks:
+                    bal_string_chks[self.hsh(sub_s)] = self.check_string(s, sub_s, ss_counts[self.hsh(sub_s)], i)
+
+                if bal_string_chks[self.hsh(sub_s)] > -1:
+
+                    return bal_string_chks[self.hsh(sub_s)]
+            
+        return 0
+
+
+    def calculate_counts(self, s: str, sub_s: str, ss_counts: dict[str, int], running_counter: dict[str, int], i: int, q: int) -> tuple[dict[str, int], dict[str, int]]:
+
+        ##  Counter() calls are the biggest bottleneck in the program,
+        ##    so this part becomes a lengthy caching workaround.
+
+        ##  If this is a new sliding window size, use count of larger string.
+
+        ##print("sub_s:", sub_s)
+
+        to_prepend, to_append = '', ''
+        if i != 0:
+            to_prepend = s[i - 2:i]
+        if to_prepend == '':
+            to_prepend = '__'
+
+        ##print("i + q:", i+q)
+
+        if i + q < len(s):
+            to_append = s[i + q:i + q + 2]
+        if to_append == '':
+            to_append = '__'
+
+        extra_chars = (to_prepend, to_append)
+
+        if running_counter == {'0': 0, '1': 0 }:
+
+            ##print("ss_counts:", ss_counts)
+
+            ##print("extra_chars:", extra_chars)
+
+            ##  Algorithm will look ahead of substring, before behind.
+
+            if self.hsh(f"{extra_chars[0]}{sub_s}") in ss_counts:
+                running_counter = dict(ss_counts[self.hsh(f"{extra_chars[0]}{sub_s}")])
+                running_counter[extra_chars[0][0]] -= 1
+                running_counter[extra_chars[0][1]] -= 1
+                ##print("Updating running counter via prepended substring")
+                ##print(sub_s, extra_chars, running_counter)
+                
+            elif self.hsh(f"{sub_s}{extra_chars[1]}") in ss_counts:
+                running_counter = dict(ss_counts[self.hsh(f"{sub_s}{extra_chars[1]}")])
+                running_counter[extra_chars[1][0]] -= 1
+                running_counter[extra_chars[1][1]] -= 1
+                ##print("Updating running counter via appended substring")
+                ##print(sub_s, extra_chars, running_counter)
+            
+            else:
+                ##  If biggest_str is an odd length the above won't be reached.
+                ##  Simplest to call Counter() once more.
+                ##print("Running Counter()")
+                ss_counts[self.hsh(sub_s)] = Counter(sub_s)
+
+
+        ##  Else adjust running_counter.
+        else:
+
+            ##print("Updating running counter")
+
+            running_counter[s[i-1]] -= 1
+            running_counter[sub_s[-1]] += 1
+
+            ##print(sub_s, extra_chars, running_counter)
+
+        ##  Store for potential future lookups.
+        ss_counts[self.hsh(sub_s)] = dict(running_counter)
+
+        ##print(ss_counts)
+
+        return running_counter, ss_counts
+
+
+    def check_string(self, s: str, sub_s: str, counts: dict[str, int], pos: int) -> int:
+
+        target = None
+
+        ##  If equal quantities of 1 and 0, substring is best.
+
+        ##print("counts", counts)
+
+        if counts['0'] == counts['1']:
+            return len(sub_s)
+
+        ##  If there is only 1 character difference: viable candidate.
+
+        elif counts['0'] - 1 == counts['1'] + 1:
+
+            target = '1'
+
+        elif counts['0'] + 1 == counts['1'] - 1:
+
+            target = '0'
+
+        ##  Compare with rest of string, seeking a 1 or a 0.
+
+        if target is not None:
+
+            pre_str = s[0:pos]
+
+            post_str = s[(pos + len(sub_s)):]
+
+            if target in pre_str or target in post_str:
+
+                return len(sub_s)
+
+        return -1
+
+    def hsh(self, s: str) -> str:
+
+        ##  Reducing memory consumption of long (1, 0) strings, via hash.
+        ##  In exchange for CPU cycles, that is.
+        ##  The cutting of md5 
+
+        return s
+
+        ##  hex(int(f"1{sub_s.zfill(len(s))}"))
+
+        return adler32(str.encode(s))
+
+        return md5(s.encode('utf-8')).hexdigest()
+    
