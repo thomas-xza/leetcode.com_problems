@@ -1,0 +1,30 @@
+#!/usr/bin/env python3
+
+##  I need an AVL implementation that I know works.
+
+import unittest
+
+from avl_implementation import AVLTree, TreeNode
+
+class TestAVLImplementation(unittest.TestCase):
+
+    def setUp(self):
+
+        ##  64 words via GPT-OSS.
+        
+        self.words = ["alpha","bravo","charlie","delta","echo","foxtrot","golf","hotel","india","juliet","kilo","lima","mike","november","oscar","papa","quebec","romeo","sierra","tango","uniform","victor","whiskey","xray","yankee","zulu","apex","bloom","cinder","dune","ember","frost","glade","haven","iris","jade","knoll","lagoon","mist","nebula","orbit","pinnacle","quark","rift","sable","tide","ultra","vortex","wisp","xenon","yonder","zenith","amber","briar","cobalt","dynamo","eclipse","flare","garnet","helium","ivory","jadeite","kyoto","lattice","mosaic","nebular","onyx","pulsar","quiver","ripple","saffron","terra","umbra","velvet","wyvern","xylophone","yarrow","zephyr"]
+
+        self.t = TreeNode()
+
+        
+    def test_insert_all(self):
+
+        for w in self.words:
+            
+            AVLTree.insert(self, self.t, w)
+
+        print(t.height)
+
+        
+if __name__ == '__main__':
+    unittest.main()
