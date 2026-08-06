@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 
-##  Seeking an AVL implementation that I know works.
+##  Seeking an AVL implementation that I know relatively works.
+
+
+##  Note that this implementation is not perfect, and does have a few
+##  quirks, but is approximately of O(logn) size upon use.
 
 import unittest, math, random
 
@@ -70,9 +74,6 @@ class TestAVLImplementation(unittest.TestCase):
         ##  A quirk of the implementation is that a tree with a null root node is of negative height.
  
         self.assertEqual(self.t.height, -1)
-
-        
-        
         
 
     def test_insert_extra(self):
@@ -97,7 +98,7 @@ class TestAVLImplementation(unittest.TestCase):
         self.assertEqual(len(self.t.inorder_traverse()),
                            len(self.words) + len(w_extra))
 
-        ##  Check the height is not greater than log2(64).
+        ##  Check the height is greater than log2(64).
 
         self.assertGreater(self.t.height,
                              math.log2(len(self.words)))        
