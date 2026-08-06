@@ -154,6 +154,27 @@ class TestAVLImplementation(unittest.TestCase):
             print(f"Found {str_test}")
         
         print(f"Lookup time: f{time.time() - begin}")
+
+
+    def test_string(self):
+
+        ##  A mystery remains as to how Python represents strings
+        ##  during comparison. Does it comprehend alphabetical order?
+        
+        random.seed(3092380437053670654)
+
+        random.shuffle(self.words)
+
+        for w in self.words:
+
+             self.t.insert(w)
+
+        ##  Ideally would appear next to "zenith" in the tree.
+
+        self.t.insert("zenithx")
+        
+        print(self.t.inorder_traverse())
+        
         
         
 if __name__ == '__main__':
