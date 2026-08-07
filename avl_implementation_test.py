@@ -106,11 +106,13 @@ class TestAVLImplementation(unittest.TestCase):
 
     def test_extensive(self):
 
-        ##  Note that the dictionary takes ~20s to insert to the tree.
-
         ##  Load file contents to tree.
 
         str_test = "profanably"
+
+        print("Loading dictionary.txt for insertions, this may take ~20s")
+
+        begin_insert = time.time()
 
         with open('dictionary.txt', "r") as f:
             for line in f:
@@ -119,7 +121,9 @@ class TestAVLImplementation(unittest.TestCase):
                 self.t.insert(line_text)
 
                 if line_text == str_test:
-                    print(f"Adding {str_test}")
+                    print(f"Adding '{str_test}'")
+
+        print(f"Insertion time for full dictionary: {time.time() - begin_insert}")
 
         ##  The size of the file is 466550 lines.
         ##  Check all elements were added successfully.
@@ -138,7 +142,7 @@ class TestAVLImplementation(unittest.TestCase):
 
         res = self.t.insert(str_test)
 
-        print(res)
+        # print(res)
 
         ##  Note that a false result from insert() means that an
         ##  insertion *didn't* happen, which was because the string
@@ -151,9 +155,23 @@ class TestAVLImplementation(unittest.TestCase):
             
         if res == False:
             
-            print(f"Found {str_test}")
+            print(f"Found '{str_test}'")
+
+        ##  Test finding all strings just inserted.
+
+        print("Loading dictionary.txt for lookups, this may take ~20s")
+
+        with open('dictionary.txt', "r") as f:
+            for line in f:
+                line_text = line.strip()
+                res = self.t.insert(line_text)
+
+                self.assertFalse(res)
+                
+                if res == True:
+                    print(f"Could not find {line_text} within AVL tree.")
         
-        print(f"Lookup time: f{time.time() - begin}")
+        print(f"Lookup time for full dictionary: {time.time() - begin}")
 
 
     def test_string(self):
@@ -173,7 +191,7 @@ class TestAVLImplementation(unittest.TestCase):
 
         self.t.insert("zenithx")
         
-        print(self.t.inorder_traverse())
+        print("To inspect if tree is alphabetically ordered:", self.t.inorder_traverse())
         
         
         
