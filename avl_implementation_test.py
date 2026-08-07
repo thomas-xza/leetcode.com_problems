@@ -110,7 +110,7 @@ class TestAVLImplementation(unittest.TestCase):
 
         str_test = "profanably"
 
-        print("Loading dictionary.txt for insertions, this may take ~20s")
+        print("Loading dictionary.txt (466550 words) for insertions, this may take ~20s")
 
         begin_insert = time.time()
 
@@ -159,7 +159,7 @@ class TestAVLImplementation(unittest.TestCase):
 
         ##  Test finding all strings just inserted.
 
-        print("Loading dictionary.txt for lookups, this may take ~20s")
+        print("Loading dictionary.txt (466550 words) for lookups, this may take ~20s")
 
         with open('dictionary.txt', "r") as f:
             for line in f:
