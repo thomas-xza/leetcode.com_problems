@@ -4,6 +4,7 @@ Issues with Leetcode as a source of practice for hiring process code challenges 
 - Some Leetcode tests cover cumbersome edge cases (typically there are 100s or 1000s of tests, but only ~20 in a hiring challenge), that may be of no interest to interviewers
 - Some Leetcode challenges may require niche prerequisite computer science knowledge, however these types of challenges may be more along the lines of Project Euler
 - Some Leetcode challenges may have average implementation times far longer than a typical hiring process code challenge time limit (e.g. Leetcode #4 which suggests implementing two binary searches that run in parallel, and then converge, to get to O(log(m + n))
+- Some more iterated platforms offer version controlling, whereas Leetcode is mainly just a textbox
 
 Similarities:
 - As Leetcode tests per challenge are in the quantity of 100s and 1000s, typically not all are read through to complete a challenge; similar to 'hidden' tests in a hiring process challenge (i.e. test input and output is not provided to developer)
@@ -11,7 +12,7 @@ Similarities:
 - Leetcode provides acceptance scores (how many people passed all provided tests), which are sometimes out-of-sync with difficulty labels, and hiring process challenges are typically looking primarily at acceptance scores
 - Developers can fall victim to thinking of solutions from the perspective of known, formally recognised algorithms, rather than inventing new, more efficient ones based on the context
 - Browser based interfaces, play buttons and all...
-- Print statements can cause tests to fail
+- Print statements can cause tests to fail (on some platforms, including Leetcode)
 
 Strategy is to practice prototyping an algorithm quickly (very difficult) in Python, then porting to C quickly (not that hard). Because tests for a sample challenge (that can be retaken infinite times) for one major company (with presumably a huge quantity of applicants) seemed to only pass tests if implemented in C. It can be difficult to predict, early on, whether all tests can be passed with an interpreted language.<br/>
 LLMs are not yet socially accepted for the latter part, though they are very good at Python to Go ports (relatively similar language features), however Go has many idioms, doesn't receive first-party support in a multi-language context (e.g. have to explicitly make all ints as int32 for tests to work, requiring more idioms).<br/>
