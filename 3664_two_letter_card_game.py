@@ -1,9 +1,8 @@
 
 ##  This question was hugely misunderstood for a long time... functions have been written and deleted various times in the process.
 
-##  Furthermore, the algorithm did not become clear until various exploration which eventually led to tests 700+.
-
-##  The algorithm is fine but there is some timing limit issue at 834/844.
+##  Something goes wrong at test 834/844.
+##  But even if changes were made, there may be an unwritten but arguably correct test that it does not pass. So I lost interest.
 
 class Solution:
 
