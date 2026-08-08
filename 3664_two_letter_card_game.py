@@ -7,33 +7,24 @@ class Solution:
 
     def score(self, cards: List[str], x: str) -> int:
 
-        card_counts = self.count_cards(cards, x)
-
-        duplicates = self.count_duplicates(cards, x)
-
-        # sym_counts = self.symmetric_counts(cards, x)
-        # print("sym_counts:", sym_counts)
-
         pairs = 0
 
         ##  Find all pairs within same type.
 
-        print("card counts", card_counts)
+        for card_type in range(2):
 
-        for card_type in [f"{x}_", f"_{x}"]:
+            cards, new_pairs = self.pair_singles(cards, x, card_type)
 
-            pair_singles(f"{x}_")
-
-            new_pairs = (card_counts[card_type] - duplicates[card_type]) // 2
-            card_counts[card_type] -= new_pairs
             pairs += new_pairs
 
         print('pairs pre-doubles', pairs)
 
+        card_counts = self.count_cards(cards, x)
+
         ##  Order remaining single types by quantity available.
 
         singles = [ [f"{x}_", card_counts[f"{x}_"]],
-                               [f"_{x}", card_counts[f"_{x}"]] ]
+                    [f"_{x}", card_counts[f"_{x}"]] ]
 
         doubles = [ [f"{x}{x}", card_counts[f"{x}{x}"]] ]
 
@@ -63,9 +54,56 @@ class Solution:
                 return pairs
 
         return pairs
+        
 
+    def pair_singles(self, cards: list[str], x: str, card_type: int) -> tuple[list[str], str]:
 
-    def pair_singles
+        new_cards = []
+
+        x_cards = defaultdict(int)
+
+        for card in cards:
+            if card[card_type] == x:
+                x_cards[card] += 1
+            else:
+                new_cards += [card]
+
+        alpha = "abcdefghijklmnopqrstuvwxyz".replace(x, '')
+
+        pairs = 0
+
+        for i, a in enumerate(alpha):
+            
+            target = f"{x}{a}"
+
+            if card_type == 1:
+                target = f"{a}{x}"
+
+            for j, b in enumerate(alpha):
+
+                target2 = f"{x}{b}"
+
+                if card_type == 1:
+                    target2 = f"{b}{x}"
+
+                if (target != target2):
+
+                    if x_cards[target] > x_cards[target2]:
+                        new_pairs = x_cards[target2]
+                    
+                    else:
+                        new_pairs = x_cards[target]
+
+                    x_cards[target2] -= new_pairs
+                    x_cards[target] -= new_pairs
+                    pairs += new_pairs
+        
+        for card, quantity in x_cards.items():
+            for _ in range(quantity):
+                new_cards += [card]
+
+        return new_cards, pairs
+
 
 
     def calc_new_pairs(self, counts: list[tuple[str, int]]) -> tuple[list[tuple[str, int]], int]:
@@ -106,29 +144,29 @@ class Solution:
         return card_count    
 
     
-    def count_duplicates(self, cards: list[str], x:str) -> int:
+    # def count_duplicates(self, cards: list[str], x:str) -> int:
 
-        alpha = "abcdefghijklmnopqrstuvwxyz"
-        alpha.replace(x, '')
+    #     alpha = "abcdefghijklmnopqrstuvwxyz"
+    #     alpha.replace(x, '')
 
-        duplicates_ax = defaultdict(int)
-        duplicates_xa = defaultdict(int)
+    #     duplicates_ax = defaultdict(int)
+    #     duplicates_xa = defaultdict(int)
 
-        extras_xa, extras_ax = 0, 0
+    #     extras_xa, extras_ax = 0, 0
 
-        for card in cards:
-            if card[0] == x:
-                duplicates_xa[card] += 1
-            elif card[1] == x:
-                duplicates_xa[card] += 1
+    #     for card in cards:
+    #         if card[0] == x:
+    #             duplicates_xa[card] += 1
+    #         elif card[1] == x:
+    #             duplicates_xa[card] += 1
 
-        for k, v in duplicates_xa.values():
-            if v > 1:
-                extras_xa += v - 1
+    #     for k, v in duplicates_xa.values():
+    #         if v > 1:
+    #             extras_xa += v - 1
 
-        for k, v in duplicates_ax.values():
-            if v > 1:
-                extras_ax += v - 1
+    #     for k, v in duplicates_ax.values():
+    #         if v > 1:
+    #             extras_ax += v - 1
 
-        return ({f"{x}_": extras_xa, f"_{x}": extras_ax})
+    #     return ({f"{x}_": extras_xa, f"_{x}": extras_ax})
 
