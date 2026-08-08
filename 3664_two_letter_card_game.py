@@ -1,8 +1,17 @@
 
-##  This question was hugely misunderstood for a long time... functions have been written and deleted various times in the process.
+##  Fails test 837/844; execution limit timeout.
 
-##  Something goes wrong at test 834/844.
-##  But even if changes were made, there may be an unwritten but arguably correct test that it does not pass. So I lost interest.
+##  The reason is because sorted() is called approximately n/2 times,
+##    and Timsort is O(nlogn), so find_two_largest() is a member of O(n^2logn).
+
+##  The function could be changed so that the data is only sorted once,
+##    and then statefully maintained thereon, via small adjustments 2n times,
+##    but this would need some refactoring.
+##    find_two_largest() could then become a member of O(n^2) instead.
+
+##  This question was hugely misunderstood for a long time...
+##    functions have been written and deleted various times in the process.
+##    So the desire to optimise the algorithm has become diminished.
 
 class Solution:
 
@@ -13,10 +22,12 @@ class Solution:
         ##  Cut all superflous cards.
         cards = list(filter(lambda card: x in card, cards))
 
+        print(cards)
+
         res = True
         pairs_n = 0
 
-        counts = Counter(cards)
+        counts = dict(Counter(cards))
 
         while res == True and len(cards) > 1:
 
@@ -27,9 +38,9 @@ class Solution:
             ##print("Pair selected", pair)
 
             if pair is not (None, None):
-                cards, res = self.remove_pair(cards, pair, counts)
+                cards, res, counts = self.remove_pair(cards, pair, counts)
 
-            ##print(cards)
+            ##print(counts)
 
             if res == True:
                 pairs_n += 1
@@ -40,14 +51,17 @@ class Solution:
     def remove_pair(self, cards: list[str], pair: tuple[str], counts: dict[str, int]) -> tuple[list[str], int]:
 
         if counts[pair[0]] > 0 and counts[pair[1]] > 0:
-            cards.remove(pair[0])
-            cards.remove(pair[1])
-            counts[pair[0]] -= 1
-            counts[pair[1]] -= 1
-            return cards, True
+
+            for card in pair:
+                cards.remove(card)
+                counts[card] -= 1
+                if counts[card] == 0:
+                    counts.pop(card, None)
+
+            return cards, True, counts
 
         else:
-            return cards, False
+            return cards, False, counts
 
 
     def find_two_largest_quantity_pairable(self, cards: List[str], x: str, counts: dict[str, int]) -> tuple[int]:
@@ -55,7 +69,8 @@ class Solution:
         ##print(list(counts.items()))
 
         ##  Need to sort primarily by quantity, and secondarily by type (doubles last).
-
+        ##  This is currently the execution time bottleneck.
+        
         sorted_counts = sorted(list(counts.items()), key=lambda x: x[1])
 
         sorted_counts.reverse()
@@ -88,7 +103,7 @@ class Solution:
 
                 card_type2 = self.classify(card2, x)
 
-                if card != card2 and (
+                if card_q > 0 and card2_q > 0 and card != card2 and (
                     (card_type < 2 and card_type2 < 2 and card_type == card_type2) or
                     (card_type == 2 and card_type2 != 2) or
                     (card_type != 2 and card_type2 == 2)
