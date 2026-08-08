@@ -1,93 +1,90 @@
 
-##  NOTE: this needs some (currently) unknown kinds of changes, as the wording of question was originally misunderstood.
-##  Specifically, the phrase:
-##    "Two cards are compatible if the strings differ in exactly 1 position."
-##    Is interpreted (by the Leetcode author) to mean that "BA" and "AB" differ in 2 positions.
-##  So the following solution needs to be refactored to account for this pain-in-the-nuts edge case.
+##  This question was hugely misunderstood for a long time... functions have been written and deleted various times in the process.
 
-################################################################################
-
-##  When considering the cards as instances of quantities (AX, XA, AA),
-##    and the order in which they are paired between (AX, XA, AA),
-##    there are a large quantity of permutations.
-##  Consider a > b > c OR a > b = c OR a = b > c.
-##  For example, if AX > XA > AA, pairing (AA, AX) and then the remainder, is 1 permutation.
-##  Specifically, there seem to be 13 possible variations in quantities,
-##    when considering greater-than or equals signs,
-##    and 3 possible ways of pairing them, resulting in 39 (13*3) permutations.
-
-##  A proof by exhaustion can be written out fairly quickly,
-##    via itertools.permutations([a, b, c], 3).
-
-# (AA, AX, XA)  Pair(AA, AX)    Pair(AX, XA)
-# (1, 2, 3)     3               2
-# (1, 3, 2)     3               2
-# (2, 1, 3)     2               3
-# (2, 3, 1)     3               2
-# (3, 1, 2)     3               2
-# (3, 2, 1)     3               2
-# (1, 2, 2)     2               2
-# (2, 1, 2)     2               2
-# (2, 2, 1)     2               2
-# (1, 1, 2)     1               2
-# (1, 2, 1)     2               2
-# (2, 1, 1)     2               1
-# (1, 1, 1)     1               1
-
-##  The hypothesis seems to be to pair whichever is of largest quantity first.
-##  We will now test this hypothesis...
-
+from copy import deepcopy
 
 class Solution:
 
     def score(self, cards: List[str], x: str) -> int:
 
-        # raw_card_quants = defaultdict(int)
-        # card_count = defaultdict(int)
-
-        # for card in cards:
-        #     raw_card_quants[card] += 1
-
         card_counts = self.count_cards(cards, x)
 
-        counts = order_counts(list(card_counts.items()))
+        duplicates = self.count_duplicates(cards, x)
 
-        counts = sorted(counts, key=lambda x: x[1])
-
-        
-
-        new_pairs = counts[1][0]
-        counts[0][0] -= new_pairs
-        counts[1][0] -= new_pairs
-        
-        print(counts)
+        # sym_counts = self.symmetric_counts(cards, x)
+        # print("sym_counts:", sym_counts)
 
         pairs = 0
 
-        ##  All homo cards need to be matched first, with whichever hetero is more available,
-        ##    homo cards cannot be matched together.
+        ##  Find all pairs within same type.
 
-        # if target > card_counts[homo]:
-        #     new_pairs = card_counts[homo]
-        #     card_counts[homo] -= new_pairs
-        #     card_counts[target] -= new_pairs
-        #     pairs += new_pairs
-        # else:
-        #     new_pairs = card_counts[target]
-        #     card_counts[homo] -= new_pairs
-        #     card_counts[target] -= new_pairs
-        #     pairs += new_pairs
+        print("card counts", card_counts)
+
+        for card_type in [f"{x}_", f"_{x}"]:
+
+            pair_singles(f"{x}_")
+
+            new_pairs = (card_counts[card_type] - duplicates[card_type]) // 2
+            card_counts[card_type] -= new_pairs
+            pairs += new_pairs
+
+        print('pairs pre-doubles', pairs)
+
+        ##  Order remaining single types by quantity available.
+
+        singles = [ [f"{x}_", card_counts[f"{x}_"]],
+                               [f"_{x}", card_counts[f"_{x}"]] ]
+
+        doubles = [ [f"{x}{x}", card_counts[f"{x}{x}"]] ]
+
+        for _ in range(2):
+
+            new_pairs = 0
+
+            ##  Pair the doubles with the largest remaining singles.
+
+            singles = self.order_counts(singles)
+
+            print(singles)
+            print(doubles)
+
+            if doubles[0][1] > singles[0][1]:
+                new_pairs = singles[0][1]
+            else:
+                new_pairs = doubles[0][1]
+            
+            singles[0][1] -= new_pairs
+            doubles[0][1] -= new_pairs
+            pairs += new_pairs
+
+            ##  If no more doubles, nothing more can be done.
+
+            if doubles[0][1] == 0:
+                return pairs
+
+        return pairs
 
 
-    def order_counts(counts: list[tuple[str, int]]) -> list[tuple[str, int]]:
+    def pair_singles
 
-        counts = sorted(counts, key=lambda x: x[1])
 
+    def calc_new_pairs(self, counts: list[tuple[str, int]]) -> tuple[list[tuple[str, int]], int]:
+
+        new_pairs = counts[0][1] % 2
+        counts[0][1] -= new_pairs
+
+        return counts, new_pairs
+
+
+    def order_counts(self, counts_in: list[tuple[str, int]]) -> list[tuple[str, int]]:
+
+        counts = sorted(counts_in, key=lambda x: x[1])
         counts.reverse()
-        
+
+        return counts
 
 
-    def count_cards(self, cards: list[str], target) -> dict[str, int]:
+    def count_cards(self, cards: list[str], target: int) -> dict[str, int]:
 
         card_count = defaultdict(int)
         alpha = "abcdefghijklmnopqrstuvwxyz"
@@ -106,37 +103,32 @@ class Solution:
             elif card[1] == char:
                 card_count[f"_{char}"] += 1
 
-        return card_count        
+        return card_count    
 
-        # ##  The ordering of the letters is irrelevant, so prevent duplicates.
-        # ##  This is an edge case but Leetcode is full of them.
+    
+    def count_duplicates(self, cards: list[str], x:str) -> int:
 
-        # alpha = "abcdefghijklmnopqrstuvwxyz"
+        alpha = "abcdefghijklmnopqrstuvwxyz"
+        alpha.replace(x, '')
 
-        # for i, x in enumerate(alpha):
-        #     for j in range(i, len(alpha)):
+        duplicates_ax = defaultdict(int)
+        duplicates_xa = defaultdict(int)
 
-        #         q = raw_card_quants[f"{x}{alpha[j]}"]
-        #         if x != alpha[j]:
-        #             q += raw_card_quants[f"{alpha[j]}{x}"]
+        extras_xa, extras_ax = 0, 0
 
-        #         if q != 0:
-        #             card_count[f"{x}{alpha[j]}"] = q
+        for card in cards:
+            if card[0] == x:
+                duplicates_xa[card] += 1
+            elif card[1] == x:
+                duplicates_xa[card] += 1
 
-        ##letter_count = self.count_letters(dict(card_count))
-        ##print(letter_count)
+        for k, v in duplicates_xa.values():
+            if v > 1:
+                extras_xa += v - 1
 
+        for k, v in duplicates_ax.values():
+            if v > 1:
+                extras_ax += v - 1
 
-    # def count_letters(self, card_count: dict[str, int]) -> dict[str,int]:
+        return ({f"{x}_": extras_xa, f"_{x}": extras_ax})
 
-    #     letter_quants = defaultdict(list)
-
-    #     for card, qs in card_count.items():
-
-    #         letter_quants[card[0]] += [card]
-    #         if card[1] != card[0]:
-    #             letter_quants[card[1]] += [card]
-
-    #     return letter_quants
-            
-        
