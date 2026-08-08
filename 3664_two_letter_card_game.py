@@ -12,6 +12,7 @@
 ##  This question was hugely misunderstood for a long time...
 ##    functions have been written and deleted various times in the process.
 ##    So the desire to optimise the algorithm has become diminished.
+##    And theoretically, there is almost always another potential execution time limit timeout test...
 
 class Solution:
 
