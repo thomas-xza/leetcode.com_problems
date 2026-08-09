@@ -1,3 +1,5 @@
+###  Leetcode as code challenge practice
+
 Lady who managed to get past the 7-stage hiring process at Bloomberg said she had practiced on Leetcode. Note that Bloomberg didn't use automated tests (instead taking an interpersonal approach) last time I tried.
 
 Issues with Leetcode as a source of practice for hiring process code challenges with automated tests:
@@ -19,3 +21,6 @@ LLMs are not yet socially accepted for the latter part, though they are very goo
 C language features more minimalist, much easier to memorise, hopefully enough for most challenges. As long as Python features are used to a bare minimum, porting from Python to C can be a one-for-one mapping.
 
 Algorithm design can be an exploratory process, based on experiments and observations, so, how to speed this up? Speed up ability to prototype?
+
+
+-----
