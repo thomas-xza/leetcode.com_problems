@@ -1,4 +1,5 @@
 
+##  There is some kind of observation/extrapolation that needs to be made, to progress.
 
 class Solution:
 
@@ -8,39 +9,40 @@ class Solution:
 
         viable_ops = []
 
-        t = len(nums)
-
-        print("t:", t)
-
         beautiful = 0
 
-        start = time.time()
-
-        nums_new = self.replace_patterns(nums)
+        nums_new, nums_pat = self.replace_patterns(nums)
 
         total = 0
 
-        if nums_new != nums:
+        if nums_pat == True:
 
-            print("nums_new!")
-            
-            for (a, b) in combinations([i for i in range(1, len(nums_new))], 2):
+            for nums_set in nums_new:
 
-              if a <= b - a or b - a <= t - b:
+                sum = 0
+                
+                for (a, b) in combinations([i for i in range(1, len(nums_set))], 2):
 
-                total += 1
+                    if a <= b - a or b - a <= len(nums_set) - b:
+                        sum += 1
+
+                print(sum, len(nums_set))
+                total += sum
 
             return total
 
-        char_positions = [i for i in range(1, len(nums))]
+        return self.raw_count(nums)
 
-        ##print(nums_new)
+
+    def raw_count(self, nums: List[int]) -> int:
+
+        beautiful = 0
 
         ##  The following 2 ops take up 20% of the execution time on higher tests.
 
-        for (a, b) in combinations(char_positions, 2):
+        for (a, b) in combinations([i for i in range(1, len(nums))], 2):
 
-              if a <= b - a or b - a <= t - b:
+              if a <= b - a or b - a <= len(nums) - b:
 
                 ##  As soon as you assign strings, timeout occurs.
 
@@ -51,49 +53,54 @@ class Solution:
                 ##print(p1, p2, p3)
 
                 if p1 == p2[:a]:
-
                     beautiful += 1
 
                 elif p2 == p3[:b-a]:
-
                     beautiful += 1
-
-        print(time.time() - start)
                 
         return beautiful
 
         
     def replace_patterns(self, nums: List[int]):
 
-        ##  Hardcoding observed patterns until some pattern among the tests' patterns is known (e.g. do the patterns always start at position 0?).
+        ##  Hardcoding until some pattern among the tests' patterns is known.
 
-        known_patterns = {"0,1,2,3,4": "01234"}
+        known_patterns = {"0,1,2,3,4": "01234",
+                          "1,2,3,4,0": "12340",
+                          "2,3,4,0,1": "23401",
+                          "3,4,0,1,2": "34012",
+                          "4,0,1,2,3": "40123",}
 
         num_str = ','.join(str(x) for x in nums)
+
+        new_nums, res = [], False
 
         for pat, rep in known_patterns.items():
 
             if pat in num_str:
 
-                num_str_test = num_str.replace(pat, rep)
+                num_str_test = num_str.replace(pat, rep).split(',')
 
-                num_str_test = num_str_test.split(',')
+                nums_test = list(map(lambda x: int(x), num_str_test))
 
-                print(num_str_test[0], num_str_test)
+                ##print(num_str_test)
 
-                num_str_test = list(map(lambda x: int(x), num_str_test))
+                if int(rep) in nums_test:
 
-                print(num_str_test)
+                    # if int(rep) != nums_test[0]:
+                    #     elem_0 = nums_test.pop(0)
+                    #     elem_1 = nums_test.pop(0)
+                    #     nums_test.insert(0, elem_0 + elem_1)
 
-                print(len(num_str_test), len(nums))
+                    # if int(rep) != nums_test[-1]:
+                    #     elem_end = nums_test.pop()
+                    #     elem_end_2 = nums_test.pop()
+                    #     nums_test.append(elem_end + elem_end_2)
 
-                if len(num_str_test) == len(nums) // len(rep):
+                    print(rep)
 
-                    print("only pat remained")
+                    new_nums += [nums_test]
+                    res = True
 
-                    return num_str_test
-
-        ##print(list(map(lambda x: int(x), num_str.split(','))))
-
-        return list(map(lambda x: int(x), num_str.split(',')))
+        return new_nums, res
 
