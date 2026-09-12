@@ -7,6 +7,7 @@ Issues with Leetcode as a source of practice for hiring process code challenges 
 - Some Leetcode challenges may require niche prerequisite computer science knowledge, however these types of challenges may be more along the lines of Project Euler
 - Some Leetcode challenges may have average implementation times far longer than a typical hiring process code challenge time limit (e.g. Leetcode #4 which suggests implementing two binary searches that run in parallel, and then converge, to get to O(log(m + n))
 - Some more iterated platforms offer version controlling, whereas Leetcode is mainly just a textbox
+- Code challenges are sometimes split into different sections, potentially each being weighted differently in terms of points, but this is (also) left opaque to the applicant
 
 Similarities:
 - As Leetcode tests per challenge are in the quantity of 100s and 1000s, typically not all are read through to complete a challenge; similar to 'hidden' tests in a hiring process challenge (i.e. test input and output is not provided to developer)
